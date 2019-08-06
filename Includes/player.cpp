@@ -35,7 +35,7 @@ SDL_GameController* player::getController() {
   return input;
 }
 
-const SDL_Rect& player::getRect() {
+SDL_Rect const& player::getRect() const {
   return brick;
 }
 
@@ -43,9 +43,9 @@ void player::update() {
   SDL_GameControllerUpdate();
   int q = SDL_GameControllerGetAxis(input, SDL_CONTROLLER_AXIS_LEFTY);
   if ((q < 0) && (y < (480.0 - brick.h))) {
-    y = min((480.0 - brick.h), y + (q/-32767.0) * 2.0);
+    y = min((480.0 - brick.h), y + ((q/-32768.0) * 2.0));
   } else if ((q > 0) && (y > 0.0)) {
-    y = max(0, y - ((q/32768.0) * 2.0));
+    y = max(0, y - ((q/32767.0) * 2.0));
   }
   brick.y = static_cast<int>(y);
 }

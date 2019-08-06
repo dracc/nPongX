@@ -19,7 +19,7 @@ public:
 
   void clear();
 
-  void drawPlayer(player p);
+  void drawPlayer(player const& p);
 
   void flip();
 };

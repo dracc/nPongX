@@ -30,7 +30,7 @@ void render::clear() {
   SDL_RenderClear(renderer);
 }
 
-void render::drawPlayer(player p) {
+void render::drawPlayer(player const& p) {
   SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
   SDL_RenderFillRect(renderer, &p.getRect());
 }

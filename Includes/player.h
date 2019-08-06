@@ -14,7 +14,7 @@ public:
 
   SDL_GameController* getController();
 
-  const SDL_Rect& getRect();
+  SDL_Rect const& getRect() const;
 
   void update();
   void updatePosition();
