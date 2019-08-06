@@ -14,7 +14,7 @@ double max(double lhs, double rhs) {
   return lhs;
 }
 
-player::player(int xPos, SDL_GameController* i) {
+player::player(int xPos, SDL_GameController* i, int a) {
   x = xPos;
   brick.x = x;
   y = 240.0;
@@ -23,6 +23,7 @@ player::player(int xPos, SDL_GameController* i) {
   brick.w = 8;
   
   input = i;
+  axis = a;
 }
 
 player::~player() {
@@ -41,7 +42,7 @@ SDL_Rect const& player::getRect() const {
 
 void player::update() {
   SDL_GameControllerUpdate();
-  int q = SDL_GameControllerGetAxis(input, SDL_CONTROLLER_AXIS_LEFTY);
+  int q = SDL_GameControllerGetAxis(input, static_cast<SDL_GameControllerAxis>(axis));
   if ((q < 0) && (y < (480.0 - brick.h))) {
     y = min((480.0 - brick.h), y + ((q/-32768.0) * 2.0));
   } else if ((q > 0) && (y > 0.0)) {

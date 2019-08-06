@@ -7,9 +7,10 @@ class player {
 private:
   SDL_Rect brick;
   double x, y;
+  int axis;
   SDL_GameController* input;
 public:
-  player(int, SDL_GameController*);
+  player(int, SDL_GameController*, int);
   ~player();
 
   SDL_GameController* getController();
