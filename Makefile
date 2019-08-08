@@ -1,10 +1,11 @@
 DEBUG = y
 XBE_TITLE = nPongX
 INCDIR = $(CURDIR)/Includes
-# RESOURCEDIR = $(CURDIR)/Resources
+RESOURCEDIR = $(CURDIR)/Resources
 
 SRCS += $(CURDIR)/main.cpp \
-	$(INCDIR)/init.cpp $(INCDIR)/player.cpp $(INCDIR)/rendering.cpp
+	$(INCDIR)/init.cpp $(INCDIR)/player.cpp $(INCDIR)/rendering.cpp \
+	$(INCDIR)/ball.cpp $(INCDIR)/smallMath.cpp
 
 NXDK_DIR = $(CURDIR)/../nxdk
 NXDK_SDL = y
@@ -20,4 +21,4 @@ include $(NXDK_DIR)/Makefile
 copy_resources:
 	@mkdir -p $(OUTPUT_DIR)
 #	@cp $(RESOURCEDIR)/480p.bmp $(OUTPUT_DIR)/480p.bmp
-#	@cp $(RESOURCEDIR)/vegur.ttf $(OUTPUT_DIR)/vegur.ttf
+	@cp $(RESOURCEDIR)/vegur.ttf $(OUTPUT_DIR)/vegur.ttf
