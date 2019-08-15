@@ -18,7 +18,7 @@ Ball::Ball(int newX, int newY) {
   rect.x = static_cast<int>(x);
   rect.y = static_cast<int>(y);
   direction = 45.0 * rad;
-  spin = rad;
+  spin = 0.0;
 }
 
 Ball::Ball(SDL_Rect const& playingField) :
@@ -64,7 +64,7 @@ void Ball::update(Player& p1, Player& p2, SDL_Rect const& playingField) {
   const SDL_Rect p2r = p2.getRect();
   x += getXDir();
   rect.x = static_cast<int>(x);
-
+  direction += spin;
   if (y <= playingField.y && direction > M_PI) {
     direction = tau - direction;
   } else if (y >= playingField.y + playingField.h && direction < M_PI) {
@@ -83,6 +83,12 @@ void Ball::update(Player& p1, Player& p2, SDL_Rect const& playingField) {
                && rect.x >= p1r.x) {
       double tmpDir = tau + hitAngle(p1r);
       direction = tmpDir > tau ? tmpDir - tau : tmpDir;
+      double pSpeed = p1.getSpeed();
+      if (pSpeed > 4.0 || pSpeed < -4.0) {
+        spin = ((p1.getSpeed() / 16.0) * M_PI_4) * rad;
+      } else {
+        spin = 0.0;
+      }
     }
   } else {
     if (x >= playingField.x + playingField.w) {
@@ -93,10 +99,11 @@ void Ball::update(Player& p1, Player& p2, SDL_Rect const& playingField) {
                && rect.x + rect.w >= p2r.x
                && rect.x + rect.w <= p2r.x + p2r.w) {
       direction = M_PI - hitAngle(p2r);
-      if (p2.getSpeed() > 2.0 || p2.getSpeed() < -2.0) {
-        spin = (p2.getSpeed() / 32.0) * M_PI_4;
+      double pSpeed = p2.getSpeed();
+      if (pSpeed > 4.0 || pSpeed < -4.0) {
+        spin = ((p2.getSpeed() / 16.0) * M_PI_4) * rad;
       } else {
-        spin = 0;
+        spin = 0.0;
       }
     }
   }
