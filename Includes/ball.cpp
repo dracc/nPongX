@@ -1,73 +1,79 @@
 #include "ball.h"
 
 #include "smallMath.h"
+
+#define _USE_MATH_DEFINES 1
 #include <math.h>
 
-ball::ball(int newX, int newY) {
+const static double tau = M_PI * 2.0;
+const static int ballSize = 4;
+const static double ballSpeed = 4.0;
+const static double rad = M_PI / 180.0;
+
+Ball::Ball(int newX, int newY) {
   x = static_cast<double>(newX);
   y = static_cast<double>(newY);
-  rect.h = 3;
-  rect.w = 3;
+  rect.h = ballSize;
+  rect.w = ballSize;
   rect.x = static_cast<int>(x);
   rect.y = static_cast<int>(y);
-  xDir = 1.0;
-  yDir = 0.0;
+  direction = 45.0 * rad;
+  spin = rad;
 }
 
-ball::ball(SDL_Rect const& playingField) :
-  ball((playingField.x + playingField.w / 2),
+Ball::Ball(SDL_Rect const& playingField) :
+  Ball((playingField.x + playingField.w / 2),
        (playingField.y + playingField.h / 2)) {}
 
-const SDL_Rect& ball::getRect() const {
+const SDL_Rect& Ball::getRect() const {
   return rect;
 }
 
-double ball::getXDir() const {
-  return xDir;
+double Ball::getXDir() const {
+  return cos(direction) * ballSpeed;
 }
 
-double ball::getYDir() const {
-  return yDir;
+double Ball::getYDir() const {
+  return sin(direction) * ballSpeed;
 }
 
-void ball::reset(SDL_Rect const& playingField) {
+void Ball::reset(SDL_Rect const& playingField) {
   x = playingField.x + playingField.w / 2.0;
   rect.x = static_cast<int>(x);
   y = playingField.y + playingField.h / 2.0;
   rect.y = static_cast<int>(y);
-  xDir = -xDir;
+  double tmpDir = direction + M_PI;
+  direction = tmpDir > tau ? tmpDir - tau : tmpDir;
 }
 
-void ball::setPos(int newX, int newY) {
+void Ball::setPos(int newX, int newY) {
   x = static_cast<double>(newX);
   y = static_cast<double>(newY);
 }
 
-void ball::setXDir(double X) {
-  xDir = X;
+void Ball::setDirection(double X) {
+  direction = X;
 }
 
-void ball::setYDir(double Y) {
-  yDir = Y;
+double Ball::hitAngle(SDL_Rect const& p) {
+  return M_PI * ((rect.y - p.y) - (p.h >> 1)) / static_cast<double>(p.h);
 }
 
-void ball::update(player& p1, player& p2, SDL_Rect const& playingField) {
+void Ball::update(Player& p1, Player& p2, SDL_Rect const& playingField) {
   const SDL_Rect p1r = p1.getRect();
   const SDL_Rect p2r = p2.getRect();
-  x += xDir;
+  x += getXDir();
   rect.x = static_cast<int>(x);
 
-  if (y <= playingField.y
-      && yDir < 0.0) {
-    yDir = -yDir;
-  } else if (y >= playingField.y + playingField.h
-             && yDir > 0.0) {
-    yDir = -yDir;
+  if (y <= playingField.y && direction > M_PI) {
+    direction = tau - direction;
+  } else if (y >= playingField.y + playingField.h && direction < M_PI) {
+    direction = tau - direction;
   }
-  y += yDir;
+  y += getYDir();
   rect.y = static_cast<int>(y);
   
-  if (xDir < 0.0) {
+  if (direction <= (M_PI + M_PI_2) && direction > M_PI_2) {
     if (x <= playingField.x) {
       p2.givePoint();
       reset(playingField);
@@ -75,10 +81,8 @@ void ball::update(player& p1, player& p2, SDL_Rect const& playingField) {
                && p1r.y < rect.y
                && rect.x <= p1r.x + p1r.w
                && rect.x >= p1r.x) {
-      // FIXME: Set speed and Y direction depending on where the paddle was hit.
-      int yy = (rect.y - p1r.y) - (p1r.h/2);
-      yDir = 2.0 * yy / static_cast<double>(p1r.h);
-      xDir = -xDir;
+      double tmpDir = tau + hitAngle(p1r);
+      direction = tmpDir > tau ? tmpDir - tau : tmpDir;
     }
   } else {
     if (x >= playingField.x + playingField.w) {
@@ -88,9 +92,12 @@ void ball::update(player& p1, player& p2, SDL_Rect const& playingField) {
                && p2r.y < rect.y
                && rect.x + rect.w >= p2r.x
                && rect.x + rect.w <= p2r.x + p2r.w) {
-      // Fixme: Set speed and Y direction depending on where the paddle was hit.
-      yDir = (((rect.y - p2r.y) - (p2r.h/2)) * 2) / static_cast<double>(p2r.h);
-      xDir = -xDir;
+      direction = M_PI - hitAngle(p2r);
+      if (p2.getSpeed() > 2.0 || p2.getSpeed() < -2.0) {
+        spin = (p2.getSpeed() / 32.0) * M_PI_4;
+      } else {
+        spin = 0;
+      }
     }
   }
 }

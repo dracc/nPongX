@@ -4,15 +4,18 @@
 #include <SDL.h>
 #include "player.h"
 
-class ball {
+class Ball {
 private:
   double x, y;
   SDL_Rect rect;
-  double xDir, yDir;
+  double direction;
+  double spin;
+
+  double hitAngle(SDL_Rect const& p);
 public:
-  ball(int newX, int newY);
-  ball(SDL_Rect const& playingField);
-//  ~ball() = default;
+  Ball(int newX, int newY);
+  Ball(SDL_Rect const& playingField);
+//  ~Ball() = default;
 
   const SDL_Rect& getRect() const;
   
@@ -21,10 +24,9 @@ public:
 
   void reset(SDL_Rect const& playingField);
   void setPos(int newX, int newY);
-  void setXDir(double X);
-  void setYDir(double Y);
+  void setDirection(double X);
 
-  void update(player& p1, player& p2, SDL_Rect const& playingField);
+  void update(Player& p1, Player& p2, SDL_Rect const& playingField);
 };
 
 #endif
