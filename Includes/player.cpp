@@ -2,72 +2,81 @@
 
 #include "smallMath.h"
 
-player::player(int xPos, SDL_GameController* i, int a) {
-  x = xPos;
+const static int DEADZONE = 4096;
+
+Player::Player(int xPos, SDL_GameController* i, int axis)
+  : x(xPos), axis(axis), input(i)
+{
   brick.x = x;
   y = 240.0;
 
   brick.h = 64;
   brick.w = 8;
   
-  input = i;
-  axis = a;
-
   score = 0;
   scoreTex = nullptr;
+  speed = 0.0;
 }
 
-player::~player() {
+Player::~Player() {
   if (input != nullptr) {
     SDL_GameControllerClose(input);
   }
 }
 
-SDL_GameController* player::getController() {
+SDL_GameController* Player::getController() {
   return input;
 }
 
-SDL_Rect const& player::getRect() const {
+SDL_Rect const& Player::getRect() const {
   return brick;
 }
 
-void player::update(SDL_Rect const& playingField) {
+void Player::update(SDL_Rect const& playingField) {
   SDL_GameControllerUpdate();
   double pfyMin = playingField.y;
   double pfyMax = playingField.y + playingField.h;
   int q = SDL_GameControllerGetAxis(input, static_cast<SDL_GameControllerAxis>(axis));
-  if ((q < 0) && (y < (pfyMax - brick.h))) {
-    y = min((pfyMax - brick.h), y + ((q/-32768.0) * 2.0));
-  } else if ((q > 0) && (y > pfyMin)) {
-    y = max(pfyMin, y - ((q/32767.0) * 2.0));
+  if ((q < -DEADZONE) && (y < (pfyMax - brick.h))) {
+    speed = q / 4096.0;
+    y = min((pfyMax - brick.h), y - speed);
+  } else if ((q > DEADZONE) && (y > pfyMin)) {
+    speed = q / 4096.0;
+    y = max(pfyMin, y - speed);
+  } else {
+    speed = 0.0;
   }
   brick.y = static_cast<int>(y);
 }
 
-void player::updatePosition() {
+void Player::updatePosition() {
 //  brick.y = y;
 }
 
-void player::givePoint() {
+double Player::getSpeed() const {
+  return speed;
+}
+
+void Player::givePoint() {
   ++score;
 }
 
-void player::takePoint() {
+void Player::takePoint() {
   --score;
 }
 
-void player::zeroPoints() {
+void Player::zeroPoints() {
   score = 0;
 }
 
-int player::getScore() {
+int Player::getScore() {
   return score;
 }
 
-SDL_Texture* player::getScoreTex() {
+SDL_Texture* Player::getScoreTex() {
   return scoreTex;
 }
 
-void player::setScoreTex(SDL_Texture* tex) {
+void Player::setScoreTex(SDL_Texture* tex) {
   scoreTex = tex;
 }

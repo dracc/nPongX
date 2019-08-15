@@ -3,7 +3,7 @@
 
 #include <SDL.h>
 
-class player {
+class Player {
 private:
   SDL_Rect brick;
   double x, y;
@@ -11,10 +11,11 @@ private:
   SDL_GameController* input;
   int score;
   SDL_Texture* scoreTex;
+  double speed;
   
 public:
-  player(int, SDL_GameController*, int);
-  ~player();
+  Player(int xPos, SDL_GameController* i, int axis);
+  ~Player();
 
   SDL_GameController* getController();
 
@@ -22,6 +23,7 @@ public:
 
   void update(SDL_Rect const& playingField);
   void updatePosition();
+  double getSpeed() const;
 
   void givePoint();
   void takePoint();
