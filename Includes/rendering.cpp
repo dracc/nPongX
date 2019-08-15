@@ -7,7 +7,7 @@ const extern int SCREEN_WIDTH;
 const extern int SCREEN_HEIGHT;
 }
 
-render::render() {
+Renderer::Renderer() {
   window = SDL_CreateWindow("nPongX",
                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                             SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -19,26 +19,26 @@ render::render() {
   scoreColor = SDL_Color{0xFF, 0xFF, 0xFF, 0xFF};
 }
 
-render::~render() {
+Renderer::~Renderer() {
   TTF_CloseFont(font);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
 }
 
-SDL_Renderer* render::getRenderer() {
+SDL_Renderer* Renderer::getRenderer() {
   return renderer;
 }
 
-SDL_Window* render::getWindow() {
+SDL_Window* Renderer::getWindow() {
   return window;
 }
 
-void render::clear() {
+void Renderer::clear() {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xFF);
   SDL_RenderClear(renderer);
 }
 
-void render::updatePlayerScore(player& p) {
+void Renderer::updatePlayerScore(Player& p) {
   if (p.getScoreTex() != nullptr) {
     SDL_DestroyTexture(p.getScoreTex());
   }
@@ -52,7 +52,7 @@ void render::updatePlayerScore(player& p) {
   SDL_FreeSurface(surf);
 }
 
-void render::drawField(SDL_Rect const& playingField) {
+void Renderer::drawField(SDL_Rect const& playingField) {
   SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
   SDL_RenderDrawRect(renderer, &playingField);
 
@@ -63,22 +63,22 @@ void render::drawField(SDL_Rect const& playingField) {
   }
 }
 
-void render::drawScores(player& p1, player& p2) {
+void Renderer::drawScores(Player& p1, Player& p2) {
   SDL_RenderCopy(renderer, p1.getScoreTex(), nullptr, &p1Score);
   SDL_RenderCopy(renderer, p2.getScoreTex(), nullptr, &p2Score);
 }
 
-void render::drawPlayer(player const& p) {
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+void Renderer::drawPlayer(Player const& p) {
+  //SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
   SDL_RenderFillRect(renderer, &p.getRect());
 }
 
-void render::drawBall(ball const& b) {
+void Renderer::drawBall(Ball const& b) {
   SDL_SetRenderDrawColor(renderer, 0xFF, 0x40, 0xFF, 0xFF);
   SDL_RenderFillRect(renderer, &b.getRect());
 }
 
-void render::flip() {
+void Renderer::flip() {
   SDL_RenderPresent(renderer);
-//  XVideoWaitForVBlank();
+  XVideoWaitForVBlank();
 }

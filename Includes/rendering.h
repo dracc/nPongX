@@ -7,7 +7,7 @@
 #include "player.h"
 #include "ball.h"
 
-class render {
+class Renderer {
 private:
   SDL_Window* window;
   SDL_Renderer* renderer;
@@ -17,20 +17,20 @@ private:
   SDL_Color scoreColor;
 
 public:
-  render();
-  ~render();
+  Renderer();
+  ~Renderer();
   
   SDL_Renderer* getRenderer();
   SDL_Window* getWindow();
 
   void clear();
 
-  void updatePlayerScore(player& p);
+  void updatePlayerScore(Player& p);
 
   void drawField(SDL_Rect const& playingField);
-  void drawScores(player& p1, player& p2);
-  void drawPlayer(player const& p);
-  void drawBall(ball const& b);
+  void drawScores(Player& p1, Player& p2);
+  void drawPlayer(Player const& p);
+  void drawBall(Ball const& b);
 
   void flip();
 };
