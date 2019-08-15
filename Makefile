@@ -11,8 +11,8 @@ NXDK_DIR = $(CURDIR)/../nxdk
 NXDK_SDL = y
 GEN_XISO = ${XBE_TITLE}.iso
 
-CXXFLAGS += -I$(INCDIR) -Wall -Wextra -std=gnu++11
-CFLAGS   += -std=gnu11
+CXXFLAGS += -I$(INCDIR) -Wall -Wextra -std=gnu++11 -O3  -D_USE_MATH_DEFINES
+CFLAGS   += -std=gnu11 -O3
 
 new_all: copy_resources all
 
